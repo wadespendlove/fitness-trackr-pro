@@ -11,7 +11,9 @@ import { API } from "../api/ApiContext";
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState();
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem("token") || null;
+  });
 
   const register = async (credentials) => {
     const response = await fetch(API + "/users/register", {
@@ -24,6 +26,7 @@ export function AuthProvider({ children }) {
     const result = await response.json();
     if (!response.ok) throw result;
     setToken(result.token);
+    localStorage.setItem("token", result.token);
   };
 
   const login = async (credentials) => {
@@ -37,9 +40,13 @@ export function AuthProvider({ children }) {
     const result = await response.json();
     if (!response.ok) throw result;
     setToken(result.token);
+    localStorage.setItem("token", result.token);
   };
 
-  const logout = () => setToken(null);
+  const logout = () => {
+    setToken(null);
+    localStorage.removeItem("token");
+  };
 
   const value = { token, register, login, logout };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

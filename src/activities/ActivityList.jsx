@@ -13,6 +13,8 @@ export default function ActivityList() {
   if (loading || !activities) return <p>Loading...</p>;
   if (error) return <p>Sorry! {error}</p>;
 
+  console.log(activities);
+
   return (
     <ul>
       {activities.map((activity) => (
@@ -24,21 +26,9 @@ export default function ActivityList() {
 
 /** Shows a single activity. Logged-in users will also see a delete button. */
 function ActivityListItem({ activity }) {
-  const { token } = useAuth();
-  const {
-    mutate: deleteActivity,
-    loading,
-    error,
-  } = useMutation("DELETE", "/activities/" + activity.id, ["activities"]);
-
   return (
     <li>
       <p>{activity.name}</p>
-      {token && (
-        <button onClick={() => deleteActivity()}>
-          {loading ? "Deleting" : error ? error : "Delete"}
-        </button>
-      )}
     </li>
   );
 }
